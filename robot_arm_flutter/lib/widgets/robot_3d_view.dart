@@ -70,16 +70,16 @@ class Robot3DPainter extends CustomPainter {
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
-    const gridSize = 5;
-    const step = 1.0;
+    const double gridSize = 5.0;
+    const double step = 1.0;
 
     for (double i = -gridSize; i <= gridSize; i += step) {
-      final p1 = _project(Vector3(i, -gridSize.toDouble(), 0), center);
-      final p2 = _project(Vector3(i,  gridSize.toDouble(), 0), center);
+      final p1 = _project(Vector3(i, -gridSize, 0), center);
+      final p2 = _project(Vector3(i,  gridSize, 0), center);
       canvas.drawLine(p1, p2, paint);
 
-      final p3 = _project(Vector3(-gridSize.toDouble(), i, 0), center);
-      final p4 = _project(Vector3( gridSize.toDouble(), i, 0), center);
+      final p3 = _project(Vector3(-gridSize, i, 0), center);
+      final p4 = _project(Vector3( gridSize, i, 0), center);
       canvas.drawLine(p3, p4, paint);
     }
   }

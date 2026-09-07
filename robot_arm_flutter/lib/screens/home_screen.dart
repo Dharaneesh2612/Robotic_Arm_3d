@@ -17,16 +17,16 @@ class HomeScreen extends StatelessWidget {
           _BackgroundOrbs(),
 
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 24),
 
                   // ── Logo / Header ────────────────────────────────────────
                   _AppHeader(),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 32),
 
                   // ── Feature Cards ────────────────────────────────────────
                   const Text(
@@ -62,7 +62,7 @@ class HomeScreen extends StatelessWidget {
                         'smooth animation and reachability checking.',
                   ),
 
-                  const Spacer(),
+                  const SizedBox(height: 32),
 
                   // ── Robot Specs ───────────────────────────────────────────
                   _SpecsRow(),
