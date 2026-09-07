@@ -7,11 +7,8 @@ import 'package:robot_arm_simulator/kinematics/inverse_kinematics.dart';
 
 void main() {
   group('3-DOF Kinematics Tests', () {
-    final fkEngine = ForwardKinematicsEngine();
-    final ikEngine = InverseKinematicsEngine();
-
     test('Forward Kinematics Home Position (0, 0, 0)', () {
-      final res = fkEngine.compute(0, 0, 0);
+      final res = ForwardKinematics.computeFromDeg(0, 0, 0);
       // At theta1=0, theta2=0, theta3=0:
       // Link1 is horizontal along X (L1 = 2.5)
       // Link2 is horizontal along X (L2 = 2.0)
@@ -27,35 +24,28 @@ void main() {
       final double theta2 = 45.0;
       final double theta3 = -30.0;
 
-      final fkRes = fkEngine.compute(theta1, theta2, theta3);
+      final fkRes = ForwardKinematics.computeFromDeg(theta1, theta2, theta3);
       final targetPos = fkRes.position;
 
-      final ikRes = ikEngine.solve(targetPos.x, targetPos.y, targetPos.z);
-      expect(ikRes.reachable, isTrue);
-      expect(ikRes.solutions.isNotEmpty, isTrue);
+      final ikRes = InverseKinematics.solve(targetPos.x, targetPos.y, targetPos.z);
+      expect(ikRes.success, isTrue);
+      expect(ikRes.jointAnglesDeg, isNotNull);
 
-      // Verify that at least one solution produces the target position
-      bool matched = false;
-      for (final sol in ikRes.solutions) {
-        final reFK = fkEngine.compute(sol.theta1, sol.theta2, sol.theta3);
-        if ((reFK.position.x - targetPos.x).abs() < 0.01 &&
-            (reFK.position.y - targetPos.y).abs() < 0.01 &&
-            (reFK.position.z - targetPos.z).abs() < 0.01) {
-          matched = true;
-          break;
-        }
-      }
-      expect(matched, isTrue);
+      final solDeg = ikRes.jointAnglesDeg!;
+      final reFK = ForwardKinematics.computeFromDeg(solDeg.x, solDeg.y, solDeg.z);
+      expect(reFK.position.x, closeTo(targetPos.x, 0.05));
+      expect(reFK.position.y, closeTo(targetPos.y, 0.05));
+      expect(reFK.position.z, closeTo(targetPos.z, 0.05));
     });
 
     test('Workspace reachability checking', () {
       // Point outside maximum reach (R_max = 4.5)
-      final outRes = ikEngine.solve(10.0, 10.0, 10.0);
-      expect(outRes.reachable, isFalse);
+      final outRes = InverseKinematics.solve(10.0, 10.0, 10.0);
+      expect(outRes.success, isFalse);
 
       // Point inside reach
-      final inRes = ikEngine.solve(2.0, 1.0, 1.0);
-      expect(inRes.reachable, isTrue);
+      final inRes = InverseKinematics.solve(2.0, 1.0, 1.0);
+      expect(inRes.success, isTrue);
     });
   });
 }
